@@ -116,7 +116,7 @@ public:
 	return 1;
   }
 
-  uint8_t ExtractFeature(unsigned char* const u_data, uint16_t* const feat) {
+  uint8_t ExtractFeature(unsigned char* const /*u_data*/, uint16_t* const /*feat*/) {
 	//To do: compress features 
     return 1;
   }

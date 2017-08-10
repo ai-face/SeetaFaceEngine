@@ -10,9 +10,9 @@ option(USE_SSE         "Set to ON to build use SSE"  ON)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2")
 
 # Use C++11
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-message(STATUS "C++11 support has been enabled by default.")
+# set(CMAKE_CXX_STANDARD 11)
+# set(CMAKE_CXX_STANDARD_REQUIRED ON)
+# message(STATUS "C++11 support has been enabled by default.")
 
 # Use SSE
 if (USE_SSE)
@@ -67,3 +67,7 @@ if (BUILD_EXAMPLES)
         target_link_libraries(facedet_test ${facedet_required_libs})
     endif()
 endif()
+
+
+install(DIRECTORY include/ DESTINATION include/SeetaFace/detec)
+install(TARGETS seeta_facedet_lib DESTINATION lib/)

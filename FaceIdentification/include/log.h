@@ -1,4 +1,4 @@
-/*
+﻿/*
  *
  * This file is part of the open-source SeetaFace engine, which includes three modules:
  * SeetaFace Detection, SeetaFace Alignment, and SeetaFace Identification.
@@ -72,7 +72,11 @@ class ViplLog {
   }
   ~ViplLog();
   template<class T>
-  inline ViplLog &operator << (const T &x) {
+  inline ViplLog &operator << (const T & 
+#ifdef __VIPL_LOG__
+  x
+#endif
+  ) {
 #ifdef __VIPL_LOG__
     my_cout_ << x;
 #endif

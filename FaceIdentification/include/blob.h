@@ -78,7 +78,7 @@ class Blob {
   void ToFile(const std::string file_name);
   void ToBinaryFile(const std::string file_name);
 
-  inline const float operator [](int i) const {
+  inline const float & operator [](int i) const {
     return data_.get()[i];
   }
   inline float & operator [](int i) {
@@ -93,7 +93,7 @@ class Blob {
   int count() const { return count_; }
   std::shared_ptr<float> data() const { return data_; }
  private:
-  inline int shape(int index) const {
+  inline unsigned int shape(unsigned int index) const {
     return index < shape_.size() ? shape_[index] : 1;
   }
   std::shared_ptr<float> data_;

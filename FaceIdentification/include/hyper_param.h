@@ -67,7 +67,7 @@ class HyperParam {
       param_name = read_str(file);
     }
   }
-  void ToBinaryFile(FILE* file) {
+  void ToBinaryFile(FILE* /*file*/) {
     
   }
   ~HyperParam() {
@@ -114,7 +114,7 @@ class HyperParam {
   }
  private:
   std::string read_str(FILE* file) {
-    int len;
+    unsigned int len = 0;
     CHECK_EQ(fread(&len, sizeof(int), 1, file), 1);
     if (len <= 0) return "";
     char* c_str = new char[len + 1];

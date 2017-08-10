@@ -55,11 +55,11 @@ class Net {
   virtual void CheckOutput();
 
   virtual void Release() {
-    for (int i = 0; i < output_blobs_.size(); ++i)
+    for (unsigned int i = 0; i < output_blobs_.size(); ++i)
       output_blobs_[i].Release();
   }
 
-  Net* const father() {
+  const Net* father() {
     return father_;
   }
   void SetFather(Net* father) {
@@ -107,7 +107,7 @@ class Net {
   // count the number of unreleased output blobs
   inline int num_output() {
     int count = 0;
-    for (int i = 0; i < output_blobs_.size(); ++ i)
+    for (unsigned int i = 0; i < output_blobs_.size(); ++ i)
       if (output_plugs_[i].size() == 0) count += 1;
     return count;
   }
