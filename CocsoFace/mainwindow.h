@@ -25,7 +25,7 @@
 #include <vector>
 #include <string>
 
-#include <src/extractFeats.h>
+#include "src/extractFeats.h"
 
 #include<QMenu>
 

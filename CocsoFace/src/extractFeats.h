@@ -16,7 +16,7 @@
 
 #include <sstream>
 #include <fstream>
-#include <glob.h>
+//#include <glob.h>
 
 using namespace seeta;
 using namespace std;
@@ -28,7 +28,7 @@ public:
     void loadFeaturesFilePair(std::pair<vector<string>, vector<vector<float> >> &features, string &filename);
     bool extractFeat(seeta::FaceDetection *detector, seeta::FaceAlignment *point_detector,
                      FaceIdentification *face_recognizer, cv::Mat &img_color, cv::Mat dst_img, float * feat);
-    std::vector<std::string> globVector(const std::string& pattern);
+    //std::vector<std::string> globVector(const std::string& pattern);
     std::string base_name(std::string const & path);
 
 };

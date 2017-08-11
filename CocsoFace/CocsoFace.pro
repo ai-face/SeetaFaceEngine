@@ -53,7 +53,9 @@ INCLUDEPATH += $$FalconnRoot/src/include
 # Eigen include
 INCLUDEPATH += $$FalconnRoot/external/eigen
 
-LIBS += -L/usr/local/lib -lopencv_core -lopencv_highgui -lopencv_imgproc -lopencv_video -lopencv_photo -lboost_iostreams -lboost_serialization
+LIBS += -L/usr/local/lib -lopencv_core 
+LIBS += -lopencv_highgui -lopencv_imgproc -lopencv_video 
+LIBS += -lopencv_photo -lboost_iostreams -lboost_serialization
 
 
 RESOURCES += design.qrc

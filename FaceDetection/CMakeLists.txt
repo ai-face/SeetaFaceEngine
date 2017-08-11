@@ -50,23 +50,23 @@ set(src_files
     )
 
 # Build shared library
-add_library(seeta_facedet_lib SHARED ${src_files})
+add_library(seeta_facedet_lib STATIC ${src_files})
 set(facedet_required_libs seeta_facedet_lib)
 
 # Build examples
-if (BUILD_EXAMPLES)
-    message(STATUS "Build with examples.")
-    find_package(OpenCV)
-    if (NOT OpenCV_FOUND)
-        message(WARNING "OpenCV not found. Test will not be built.")
-    else()
-        include_directories(${OpenCV_INCLUDE_DIRS})
-        list(APPEND facedet_required_libs ${OpenCV_LIBS})
+# if (BUILD_EXAMPLES)
+#     message(STATUS "Build with examples.")
+#     find_package(OpenCV)
+#     if (NOT OpenCV_FOUND)
+#         message(WARNING "OpenCV not found. Test will not be built.")
+#     else()
+#         include_directories(${OpenCV_INCLUDE_DIRS})
+#         list(APPEND facedet_required_libs ${OpenCV_LIBS})
         
-        add_executable(facedet_test src/test/facedetection_test.cpp)
-        target_link_libraries(facedet_test ${facedet_required_libs})
-    endif()
-endif()
+#         add_executable(facedet_test src/test/facedetection_test.cpp)
+#         target_link_libraries(facedet_test ${facedet_required_libs})
+#     endif()
+# endif()
 
 
 install(DIRECTORY include/ DESTINATION include/SeetaFace/detec)

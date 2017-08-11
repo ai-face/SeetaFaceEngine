@@ -18,16 +18,16 @@ set(src_files
     src/sift.cpp
     )
 
-add_library(seeta_fa_lib SHARED ${src_files})
+add_library(seeta_fa_lib STATIC ${src_files})
 set(fa_required_libs seeta_fa_lib)
 
-if (BUILD_EXAMPLES)
-    message(STATUS "Build with examples.")
-    find_package(OpenCV)
-    list(APPEND fa_required_libs ${OpenCV_LIBS} seeta_facedet_lib)
-    add_executable(fa_test src/test/face_alignment_test.cpp)
-    target_link_libraries(fa_test ${fa_required_libs})
-endif()
+# if (BUILD_EXAMPLES)
+#     message(STATUS "Build with examples.")
+#     find_package(OpenCV)
+#     list(APPEND fa_required_libs ${OpenCV_LIBS} seeta_facedet_lib)
+#     add_executable(fa_test src/test/face_alignment_test.cpp)
+#     target_link_libraries(fa_test ${fa_required_libs})
+# endif()
 
 
 install(DIRECTORY include/ DESTINATION include/SeetaFace/align)

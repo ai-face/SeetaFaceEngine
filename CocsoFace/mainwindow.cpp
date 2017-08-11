@@ -21,7 +21,7 @@
 #include <QDir>
 #include <ctime>
 
-#include <src/extractFeats.h>
+#include "src/extractFeats.h"
 
 using namespace seeta;
 
