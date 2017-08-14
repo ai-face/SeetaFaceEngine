@@ -1,4 +1,4 @@
-/*
+﻿/*
  *
  * This file is part of the open-source SeetaFace engine, which includes three modules:
  * SeetaFace Detection, SeetaFace Alignment, and SeetaFace Identification.
@@ -30,7 +30,7 @@
  */
 
 #include "common_net.h"
-
+#include <iostream>
 CommonNet::CommonNet() {
   nets_.clear();
   
@@ -61,6 +61,9 @@ std::shared_ptr<Net> CommonNet::Load(FILE* file) {
   CHECK_EQ(fread(&len, sizeof(int), 1, file), 1);
   char* net_type = new char[len + 1];
   // net type
+
+  //std::cout<<"CommonNet::Load(file)"<<std::endl;
+
   CHECK_EQ(fread(net_type, sizeof(char), len, file), len);
   net_type[len] = '\0';
   LOG(INFO) << "Creating " << net_type << " net ...";
@@ -89,6 +92,7 @@ std::shared_ptr<Net> CommonNet::Load(FILE* file) {
   std::vector<std::vector<Blob*> >& input_plugs = net->input_plugs();
 
   // subnet
+  //std::cout<<"subnet="<<num_subnet<<std::endl;
   for (int i = 0; i < num_subnet; ++ i) {
     nets[i] = Load(file);
     nets[i]->SetFather(net.get());

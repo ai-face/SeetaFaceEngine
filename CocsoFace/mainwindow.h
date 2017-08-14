@@ -6,6 +6,7 @@
 #include <QProgressBar>
 #include <QTimer>
 #include <QDebug>
+#include <QDir>
 #include "videohandler.h"
 #include <qlistwidget.h>
 
@@ -44,22 +45,22 @@ public:
 
 private:
     Ui::MainWindow *ui;
-    QLabel* localStatus;
-    QLabel* screenStatus;
+//    QLabel* localStatus;
+//    QLabel* screenStatus;
 
     QMenu *fileMenu;
 
-    QTimer processTimer;
+//    QTimer processTimer;
 
-    VideoHandler videoHandler;
+//    VideoHandler videoHandler;
     void initForm();
 
     seeta::FaceDetection *face_detector;
     seeta::FaceAlignment *point_detector;
     seeta::FaceIdentification *face_recognizer;
 
-    QMap<QString, QString> mapTrackingMethods;
-    QString trackingMethod;
+//    QMap<QString, QString> mapTrackingMethods;
+//    QString trackingMethod;
     int MinFaceSize;
     float ImagePyramidScaleFactor;
 
@@ -81,19 +82,19 @@ private:
     std::vector<falconn::DenseVector<float>> data;
     falconn::LSHConstructionParameters params_cp;
     unique_ptr<falconn::LSHNearestNeighborTable<falconn::DenseVector<float>>> cptable;
-    std::vector<int32_t> idxCandidate;
+
 
     cv::Mat dst_img;
     string path_namesFeats;
 
 
     QStringList imgNamesQString;
-    QString crops_dir;
+    QString src_dir;
 
     QListWidget *imgs_listeWidget;
 
     QMenu *ImagePopUpMenu;
-    QString imgNameSelected;
+//    QString imgNameSelected;
 
 //    QMenu *myMenu;
 
@@ -108,18 +109,30 @@ private slots:
     void on_rMaxHorizontalSlider_valueChanged(int value);
     void on_testButton_toggled(bool checked);
     void on_listView_clicked(const QModelIndex &index);
+    void on_listView_doubleClicked(const QModelIndex &index);
     void on_faceDetectionButton_clicked(bool checked);
     void on_ScaleFactorQSlider_valueChanged(int value);
     void on_queryButton_clicked();
     void on_ImgsOpenButton_clicked();
 
-    void provideContextMenu(const QPoint &pos);
     void searchSimilarImgs();
     void deleteImg();
     void createActions();
 
+public:
+
     std::vector<int32_t> do_LSH_search(cv::Mat &img_color);
-    void on_listView_doubleClicked(const QModelIndex &index);
+
+    //======================
+    QDir rootdir;
+    QDir modeldir;
+    QDir cropsdir;
+    QDir srcdir;
+    void setCropsDir(const QString & dir);
+    void clearDb();
+    void loadDb();
+    void createDb(const QString & srcdir);
+    void searchSimilearImgs(const QString & target);
 };
 
 #endif // MAINWINDOW_H

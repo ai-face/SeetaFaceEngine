@@ -11,7 +11,7 @@
 
 //#define fopen_s(pFile,filename,mode) ((*(pFile))=fopen((filename),(mode)))==NULL
 
-void extractFeats::saveFeaturesFilePair(std::pair<vector<string>, vector<vector<float> >>  &features, string &filename){
+void extractFeats::saveFeaturesFilePair(std::pair<vector<string>, vector<vector<float> >>  &features, const string &filename){
     ofstream out(filename.c_str());
     stringstream ss;
     boost::archive::binary_oarchive oa(ss);
@@ -20,7 +20,7 @@ void extractFeats::saveFeaturesFilePair(std::pair<vector<string>, vector<vector<
     out.close();
 }
 
-void extractFeats::loadFeaturesFilePair(std::pair<vector<string>, vector<vector<float> >> &features, string &filename){
+void extractFeats::loadFeaturesFilePair(std::pair<vector<string>, vector<vector<float> >> &features, const string &filename){
     ifstream in(filename.c_str());
     boost::archive::binary_iarchive ia(in);
     ia >> features.first >> features.second;

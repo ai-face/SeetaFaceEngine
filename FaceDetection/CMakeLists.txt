@@ -50,7 +50,7 @@ set(src_files
     )
 
 # Build shared library
-add_library(seeta_facedet_lib STATIC ${src_files})
+add_library(seeta_facedet_lib SHARED ${src_files})
 set(facedet_required_libs seeta_facedet_lib)
 
 # Build examples

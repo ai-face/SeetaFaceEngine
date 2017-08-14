@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 2.6)
+﻿cmake_minimum_required (VERSION 2.6)
 
 project (viplnet)
 
@@ -9,7 +9,7 @@ set(CMAKE_BUILD_TYPE "Release")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -std=c++11 -O2 -g -ggdb")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -std=c++11 -O2")
 
-MESSAGE(STATUS "other platform: ${CMAKE_SYSTEM_NAME}")
+MESSAGE(STATUS "other platform: ${CMAKE_SYSTEM_NAME}")
 
 if (CMAKE_SYSTEM_NAME MATCHES "Darwin")
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DGTEST_USE_OWN_TR1_TUPLE=1")
@@ -27,7 +27,7 @@ include_directories(${VIPLNET_SRC_DIR})
 
 aux_source_directory(./src SRC_LIST)
 aux_source_directory(./tools TOOLS_LIST)
-add_library(viplnet STATIC ${SRC_LIST} ${TOOLS_LIST})
+add_library(viplnet SHARED ${SRC_LIST} ${TOOLS_LIST})
 set_target_properties(viplnet PROPERTIES 
   VERSION ${VIPLNET_VERSION_MAJOR}.${VIPLNET_VERSION_MINOR} 
   SOVERSION ${VIPLNET_VERSION_MAJOR}.${VIPLNET_VERSION_MINOR}) 

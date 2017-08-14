@@ -18,7 +18,7 @@ set(src_files
     src/sift.cpp
     )
 
-add_library(seeta_fa_lib STATIC ${src_files})
+add_library(seeta_fa_lib SHARED ${src_files})
 set(fa_required_libs seeta_fa_lib)
 
 # if (BUILD_EXAMPLES)

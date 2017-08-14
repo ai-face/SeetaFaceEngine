@@ -1,4 +1,4 @@
-
+﻿
 cmake_minimum_required(VERSION 2.8.4)
 
 project(FaceSpyPrj)
@@ -25,6 +25,13 @@ add_definitions( -D_WIN32_WINNT=0x0601 )
 add_definitions( -DBOOST_ALL_DYN_LINK  ) # for shared boost libs
 endif()
 
+#add_definitions( -D__VIPL_LOG__ )
+
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+
+
 find_package(Boost)
 link_directories(${Boost_LIBRARY_DIRS})
 
@@ -36,3 +43,4 @@ add_subdirectory(FaceDetection)
 add_subdirectory(FaceAlignment)
 add_subdirectory(FaceIdentification)
 add_subdirectory(CocsoFace)
+add_subdirectory(cv)

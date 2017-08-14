@@ -24,8 +24,8 @@ using namespace std;
 class extractFeats
 {
 public:
-    void saveFeaturesFilePair(std::pair<vector<string>, vector<vector<float> >>  &features, string &filename);
-    void loadFeaturesFilePair(std::pair<vector<string>, vector<vector<float> >> &features, string &filename);
+    void saveFeaturesFilePair(std::pair<vector<string>, vector<vector<float> >>  &features, const string &filename);
+    void loadFeaturesFilePair(std::pair<vector<string>, vector<vector<float> >> &features, const string &filename);
     bool extractFeat(seeta::FaceDetection *detector, seeta::FaceAlignment *point_detector,
                      FaceIdentification *face_recognizer, cv::Mat &img_color, cv::Mat dst_img, float * feat);
     //std::vector<std::string> globVector(const std::string& pattern);
