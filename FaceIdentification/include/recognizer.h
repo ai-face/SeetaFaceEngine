@@ -1,4 +1,4 @@
-/*
+﻿/*
  *
  * This file is part of the open-source SeetaFace engine, which includes three modules:
  * SeetaFace Detection, SeetaFace Alignment, and SeetaFace Identification.

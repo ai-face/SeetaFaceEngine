@@ -1,11 +1,11 @@
-cmake_minimum_required(VERSION 3.1.0)
+﻿cmake_minimum_required(VERSION 3.1.0)
 
 project(seeta_facedet_lib)
 
 # Build options
-option(BUILD_EXAMPLES  "Set to ON to build examples"  ON)
-option(USE_OPENMP      "Set to ON to build use openmp"  ON)
-option(USE_SSE         "Set to ON to build use SSE"  ON)
+option(BUILD_EXAMPLES  "Set to ON to build examples"  OFF)
+option(USE_OPENMP      "Set to ON to build use openmp"  OFF)
+option(USE_SSE         "Set to ON to build use SSE"  OFF)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2")
 
@@ -22,16 +22,16 @@ if (USE_SSE)
 endif()
 
 # Use OpenMP
-if (USE_OPENMP)
-    find_package(OpenMP QUIET)
-    if (OPENMP_FOUND)
-        message(STATUS "Use OpenMP")
-        add_definitions(-DUSE_OPENMP)
-        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
-        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
-    endif()
-endif()
+#if (USE_OPENMP)
+#    find_package(OpenMP QUIET)
+#    if (OPENMP_FOUND)
+#        message(STATUS "Use OpenMP")
+#        add_definitions(-DUSE_OPENMP)
+#        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
+#        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+#        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
+#    endif()
+#endif()
 
 include_directories(include)
 

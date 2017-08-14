@@ -20,6 +20,7 @@
 #include <QMessageBox>
 #include <QDir>
 #include <ctime>
+#include <iostream>
 
 #include "src/extractFeats.h"
 
@@ -135,6 +136,7 @@ void MainWindow::initForm()
     point_detector = new seeta::FaceAlignment(
                 modeldir.absoluteFilePath("seeta_fa_v1.1.bin").toStdString().c_str());
 
+    std::cout<<modeldir.absoluteFilePath("seeta_fr_v1.0.bin").toStdString()<<std::endl;
     // Initialize face Identification model
     face_recognizer = new seeta::FaceIdentification(
                 modeldir.absoluteFilePath("seeta_fr_v1.0.bin").toStdString().c_str());

@@ -1,4 +1,4 @@
-/*
+﻿/*
  *
  * This file is part of the open-source SeetaFace engine, which includes three modules:
  * SeetaFace Detection, SeetaFace Alignment, and SeetaFace Identification.
@@ -32,7 +32,7 @@
 #include "tform_maker_net.h"
 #include "spatial_transform_net.h"
 #include "aligner.h"
-
+#include <iostream>
 #include <vector>
 namespace seeta {
 Aligner::Aligner():

@@ -33,7 +33,7 @@ class StdVectorPrefetcher<
 
   void prefetch(const std::vector<PointType>& points,
                 int_fast64_t prefetch_index) {
-#if (!EIGEN_COMP_MSVC) && (EIGEN_COMP_GNUC || EIGEN_COMP_CLANG || EIGEN_COMP_ICC)
+#if (!_MSC_VER) 
     __builtin_prefetch((points[prefetch_index]).data(), 0, 1);
 #endif
   }

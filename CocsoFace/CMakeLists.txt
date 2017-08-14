@@ -1,4 +1,4 @@
-
+﻿
 
 project(CocsoFace)
 
@@ -36,9 +36,18 @@ target_include_directories(FaceSpy
 )
 target_link_libraries(FaceSpy 
     Qt5::Widgets Qt5::Core Qt5::Gui
-    ${Boost_LIBRARIES} 
-    opencv_core opencv_highgui opencv_imgproc opencv_video opencv_photo
+
+    boost_iostreams
+    boost_serialization
+
+    opencv_core 
+    opencv_highgui 
+    opencv_imgproc 
+    opencv_video 
+    opencv_photo
+    
     viplnet
     seeta_fa_lib
     seeta_facedet_lib
+    pthread
 )
