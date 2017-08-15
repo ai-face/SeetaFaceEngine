@@ -11,7 +11,6 @@
 #include "face_detection.h"
 #include "face_alignment.h"
 
-//#include "falconn/eigen_wrapper.h"
 #include "falconn/lsh_nn_table.h"
 
 #include <QDesktopWidget>
@@ -60,8 +59,16 @@ MainWindow::MainWindow(QWidget *parent) :QMainWindow(parent), ui(new Ui::MainWin
     imgs_listeWidget->setMovement(QListView::Static);
 
     this->initForm();
-    ui->frame->hide();
     this->loadDb();
+
+    std::vector<QWidget*> dest;
+    dest.push_back(ui->previewImg);
+    dest.push_back(imgs_listeWidget);
+    dest.push_back(ui->cropImgLabel);
+    for(auto wdg : dest) {
+        wdg->setAcceptDrops(true);
+        wdg->installEventFilter(this);
+    }
 }
 
 MainWindow::~MainWindow()
@@ -76,9 +83,6 @@ void MainWindow::initForm()
     this->MinFaceSize = 20; // 最小人脸尺寸
 
     this->ImagePyramidScaleFactor = 10; // 采样率
-    ui->ScaleFactorQSlider->setMinimum(1);
-    ui->ScaleFactorQSlider->setMaximum(10);
-    ui->culrrentScaleFactorQLabel->setText(QString::number(1.0));
 
     this->numKNN = 50;
     this->numReranking = 10;
@@ -110,61 +114,16 @@ void MainWindow::initForm()
     face_recognizer = new seeta::FaceIdentification(
                 modeldir.absoluteFilePath("seeta_fr_v1.0.bin").toStdString().c_str());
 
-    path_namesFeats = cropsdir.absoluteFilePath(namefeats).toStdString();
-
     dst_img = cv::Mat((int)face_recognizer->crop_height(),
                       (int)face_recognizer->crop_width(),
                       CV_8UC((int)face_recognizer->crop_channels()));
 }
 
 
-// -----------------------------render loop-----------------------------------------------
-void MainWindow::process()
-{
-
-}
-
-// general slots
-void MainWindow::exitClicked()
-{
-    qDebug("exit");
-    QApplication::quit();
-}
-
-void MainWindow::aboutClicked()
-{
-    qDebug("about");
-}
-
-// ----------------------------------------------------------------------------
-void MainWindow::on_startButton_toggled(bool checked)
-{
-
-}
-
-void MainWindow::on_rMaxHorizontalSlider_valueChanged(int )
-{
-    this->MinFaceSize = ui->rMaxHorizontalSlider->value();
-    //qDebug() << "rMax: " << this->Radius_Max;
-    ui->culrrentRadius->setText(QString::number(this->MinFaceSize));
-}
-
-
-void MainWindow::on_ScaleFactorQSlider_valueChanged(int )
-{
-    this->ImagePyramidScaleFactor = ui->ScaleFactorQSlider->value();
-    ui->culrrentScaleFactorQLabel->setText(QString::number(0.1*this->ImagePyramidScaleFactor));
-
-}
-
-
-void MainWindow::on_testButton_toggled(bool checked)
-{
-}
 
 void MainWindow::on_ImgsOpenButton_clicked()
 {
-    src_dir = QFileDialog::getExistingDirectory(this, tr("Open Directory"),
+    QString src_dir = QFileDialog::getExistingDirectory(this, tr("Open Directory"),
                                                   "/home", QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
     if ( !src_dir.isEmpty() )
     {
@@ -173,9 +132,8 @@ void MainWindow::on_ImgsOpenButton_clicked()
         QDir export_folder(src_dir);
         QStringList sl ; sl<<"*.bmp"<<"*.png"<<"*.jpg";
         export_folder.setNameFilters(sl);
-        imgNamesQString = export_folder.entryList();
-        // for ( QStringList::Iterator it = imgNamesQString.begin(); it != imgNamesQString.end(); ++it )
-        // qDebug() << "Processed command: " << *it;
+
+        QStringList imgNamesQString = export_folder.entryList();
         QStringListModel *model = new QStringListModel(this);
         // Populate our model
         model->setStringList(imgNamesQString);
@@ -184,42 +142,14 @@ void MainWindow::on_ImgsOpenButton_clicked()
     }
 }
 
-// 右键菜单添加搜索功能
-void MainWindow::searchSimilarImgs()
-{
-//    imgs_listeWidget->clear();
 
-//    cv::Mat img_color = cv::imread(imgNameSelected.toStdString());
-//    idxCandidate = do_LSH_search(img_color);
-
-//    for (size_t i = 0 ; i != idxCandidate.size() ; i++) {
-//        QString tmpImgName = src_dir + '/' + namesFeats.first.at(idxCandidate[i]).c_str();
-//        imgs_listeWidget->addItem(new QListWidgetItem(QIcon(tmpImgName), QString::fromStdString(namesFeats.first.at(idxCandidate[i]).c_str())));
-//    }
-//    ui->previewImg->setPixmap(QPixmap::fromImage(Helper::mat2qimage(img_color)));
-//    ui->cropImgLabel->setPixmap(QPixmap::fromImage(Helper::mat2qimage(dst_img)));
-
-//    ui->scrlArea->setWidget(imgs_listeWidget);
-
-//    idxCandidate.clear();
-}
-
-// todo: 右键菜单添加搜索功能
-void MainWindow::deleteImg(){
-    qDebug()<<"hello world";
-}
-
-// 创建动作
-void MainWindow::createActions()
-{
-}
 
 
 
 // 提取特征
-void MainWindow::on_faceDetectionButton_clicked(bool checked)
+void MainWindow::on_faceDetectionButton_clicked(bool )
 {
-    createDb(src_dir);
+    createDb(srcdir.absolutePath());
     return;
 }
 
@@ -240,17 +170,43 @@ void MainWindow::on_queryButton_clicked()
 void MainWindow::on_listView_clicked(const QModelIndex &index)
 {
     auto target =  cropsdir.absoluteFilePath(index.data(Qt::DisplayRole).toString());
-//    imgNameSelected = target;
     searchSimilearImgs(target);
-    //QPixmap img(target);
-    //ui->previewImg->setPixmap(img);
-    //ui->cropImgLabel->setPixmap(img);
 }
 
 void MainWindow::on_listView_doubleClicked(const QModelIndex &index)
 {
     auto target =  cropsdir.absoluteFilePath(index.data(Qt::DisplayRole).toString());
     searchSimilearImgs(target);
+}
+
+#include <QDropEvent>
+#include <QMimeData>
+void MainWindow::dropEvent(QDropEvent * event) {
+    const QMimeData * mimeData = event->mimeData();
+    if( mimeData->hasUrls()) {
+        auto ul = mimeData->urls();
+        if(ul.size())
+            searchSimilearImgs(ul.at(0).toLocalFile());
+    }
+    event->acceptProposedAction();
+}
+
+bool MainWindow::eventFilter(QObject *watched, QEvent *event) {
+    if( watched == this->ui->previewImg && event->type() == QEvent::Drop) {
+        this->dropEvent(dynamic_cast<QDropEvent*>(event));
+        return true;
+    } else if(watched == this->ui->previewImg && event->type() == QEvent::DragEnter) {
+        dynamic_cast<QDragEnterEvent*>(event)->acceptProposedAction();
+        return true;
+    } else if(watched == this->ui->previewImg && event->type() == QEvent::DragMove) {
+        dynamic_cast<QDragMoveEvent*> (event)->acceptProposedAction();
+        return true;
+    } else if(watched == this->ui->previewImg && event->type() == QEvent::DragLeave) {
+        event->accept();
+        return true;
+    }
+
+    return false;
 }
 
 // 搜索模块

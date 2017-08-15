@@ -26,10 +26,6 @@
         <file>icons/webcam.png</file>
         <file>icons/delete.png</file>
         <file>icons/eyeMain.png</file>
-        <file>qss/black.css</file>
-        <file>qss/MetroUI.css</file>
-        <file>qss/gray.css</file>
-        <file>qss/darkgray.css</file>
         <file>icons/video.png</file>
         <file>icons/calibrate1.png</file>
         <file>icons/tracking.png</file>
