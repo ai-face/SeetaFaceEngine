@@ -1,3 +1,5 @@
 /build/
 /build.install/
 /build2/
+/cmake-build-debug/
+/.idea/

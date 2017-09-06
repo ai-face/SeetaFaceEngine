@@ -7,26 +7,15 @@
 #include <QTimer>
 #include <QDebug>
 #include <QDir>
-#include "videohandler.h"
 #include <qlistwidget.h>
-
-#include <opencv/cv.h>
-#include <opencv/highgui.h>
-
-#include "face_identification.h"
-#include "recognizer.h"
-#include "math_functions.h"
-#include "face_detection.h"
-#include "face_alignment.h"
-
-//#include "falconn/eigen_wrapper.h"
-#include "falconn/lsh_nn_table.h"
 
 #include <qfilesystemmodel.h>
 #include <vector>
 #include <string>
 
-#include "src/extractFeats.h"
+
+#include "SearchActor.h"
+#include "FaceEngine.h"
 
 #include<QMenu>
 
@@ -47,9 +36,7 @@ private:
     Ui::MainWindow *ui;
     void initForm();
 
-    seeta::FaceDetection *face_detector;
-    seeta::FaceAlignment *point_detector;
-    seeta::FaceIdentification *face_recognizer;
+    FaceEngine engine;
 
     int MinFaceSize;
     float ImagePyramidScaleFactor;
@@ -57,22 +44,7 @@ private:
     unsigned int numKNN;
     unsigned int numReranking;
 
-
-    std::pair<std::vector<string>, std::vector<std::vector<float> >>  namesFeats;
-
-    extractFeats *featExtractor;
-
-    std::vector<falconn::DenseVector<float>> data;
-    falconn::LSHConstructionParameters params_cp;
-    unique_ptr<falconn::LSHNearestNeighborTable<falconn::DenseVector<float>>> cptable;
-
-
-    cv::Mat dst_img;
-
-
     QListWidget *imgs_listeWidget;
-
-
 
 private slots:
     void on_listView_clicked(const QModelIndex &index);
@@ -88,7 +60,8 @@ protected:
 
 public:
 
-    std::vector<int32_t> do_LSH_search(cv::Mat &img_color);
+
+    SearchActor actor;
 
     //======================
     QDir rootdir;

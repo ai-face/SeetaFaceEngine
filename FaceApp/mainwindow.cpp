@@ -4,35 +4,18 @@
 
 #include <opencv/cv.h>
 #include <opencv/highgui.h>
-
-#include "face_identification.h"
-#include "recognizer.h"
-#include "math_functions.h"
-#include "face_detection.h"
-#include "face_alignment.h"
-
-#include "falconn/lsh_nn_table.h"
-
 #include <QDesktopWidget>
 #include <QStringListModel>
 #include <QListWidget>
 #include <QMessageBox>
+#include <QFileDialog>
 #include <QDir>
 #include <ctime>
 #include <iostream>
 
-#include "src/extractFeats.h"
+#include "SearchActor.h"
+#include "FeaFile.h"
 
-using namespace seeta;
-
-using falconn::construct_table;
-using falconn::DenseVector;
-using falconn::DistanceFunction;
-using falconn::LSHConstructionParameters;
-using falconn::LSHFamily;
-using falconn::LSHNearestNeighborTable;
-using falconn::QueryStatistics;
-using falconn::StorageHashTable;
 
 const QString namefeats("namesFeats.bin");
 
@@ -84,7 +67,7 @@ void MainWindow::initForm()
 
     this->ImagePyramidScaleFactor = 10; // 采样率
 
-    this->numKNN = 50;
+    this->numKNN = 10;
     this->numReranking = 10;
 
     QString rootname("seeta_face");
@@ -97,26 +80,7 @@ void MainWindow::initForm()
     cropsdir= QDir(rootdir.absoluteFilePath(cropsname));
     if(!cropsdir.exists()) rootdir.mkdir(cropsname);
 
-    // Initialize face detection model
-    face_detector = new seeta::FaceDetection(
-                modeldir.absoluteFilePath("seeta_fd_frontal_v1.0.bin").toStdString().c_str());
-    face_detector->SetMinFaceSize(this->MinFaceSize);
-    face_detector->SetScoreThresh(2.f);
-    face_detector->SetImagePyramidScaleFactor(this->ImagePyramidScaleFactor);
-    face_detector->SetWindowStep(4, 4);
-
-    // Initialize face alignment model
-    point_detector = new seeta::FaceAlignment(
-                modeldir.absoluteFilePath("seeta_fa_v1.1.bin").toStdString().c_str());
-
-    std::cout<<modeldir.absoluteFilePath("seeta_fr_v1.0.bin").toStdString()<<std::endl;
-    // Initialize face Identification model
-    face_recognizer = new seeta::FaceIdentification(
-                modeldir.absoluteFilePath("seeta_fr_v1.0.bin").toStdString().c_str());
-
-    dst_img = cv::Mat((int)face_recognizer->crop_height(),
-                      (int)face_recognizer->crop_width(),
-                      CV_8UC((int)face_recognizer->crop_channels()));
+    engine.load(modeldir.absolutePath().toStdString());
 }
 
 
@@ -210,35 +174,21 @@ bool MainWindow::eventFilter(QObject *watched, QEvent *event) {
 }
 
 // 搜索模块
-std::vector<int32_t> MainWindow::do_LSH_search(cv::Mat &img_color){
-
-    // Calculate cosine distance between query and data base faces
-    float query_feat[2048];
-    featExtractor->extractFeat(face_detector, point_detector, face_recognizer, img_color, dst_img, query_feat);
-
-    falconn::DenseVector<float> q = Eigen::VectorXf::Map(&query_feat[0], 2048);
-    q.normalize();
-
-    loadDb();
-
-    std::vector<int32_t> idxCandidate;
-    cptable->find_k_nearest_neighbors(q, numKNN, &idxCandidate); // LSH find the K nearest neighbors
-    std::cout<<"idxCandidate size="<<idxCandidate.size()<<std::endl;
-    // do reranking
-    std::vector<std::pair<float, size_t> > dists_idxs;
-    for (unsigned int i = 0 ; i < numReranking && i < idxCandidate.size() ; i++) {
-        float tmp_cosine_dist = q.dot(data[idxCandidate[i]]);
-        dists_idxs.push_back(std::make_pair(tmp_cosine_dist, idxCandidate[i]));
-    }
-
-    std::sort(dists_idxs.begin(), dists_idxs.end());
-    std::reverse(dists_idxs.begin(), dists_idxs.end());
-
-    for(unsigned int i = 0 ; i < numReranking && i < idxCandidate.size() ; i++){
-        idxCandidate.at(i) = (int32_t)dists_idxs[i].second;
-    }
-    return idxCandidate;
-}
+//std::vector<int32_t> MainWindow::do_LSH_search(cv::Mat &img_color){
+//
+//    // Calculate cosine distance between query and data base faces
+//    //float query_feat[2048];
+//    auto r = engine.extractFeat(img_color, 1);
+//    //featExtractor->extractFeat(face_detector, point_detector, face_recognizer, img_color, dst_img, query_feat);
+//
+//    this->loadDb();
+//    std::vector<std::pair<std::size_t, float>> result = actor.search(&(r[0].second[0]), 2048, numKNN);
+//
+//    std::vector<int32_t> idxCandidate;
+//    for(int i = 0; i < result.size() && i < numReranking; i++)
+//        idxCandidate.push_back(result[i].first);
+//    return idxCandidate;
+//}
 
 //======================================================
 void MainWindow::setCropsDir(const QString & dir) {
@@ -250,8 +200,8 @@ void MainWindow::setCropsDir(const QString & dir) {
 }
 
 void MainWindow::clearDb(){
-    namesFeats.first.clear();
-    namesFeats.second.clear();
+//    namesFeats.first.clear();
+//    namesFeats.second.clear();
     cropsdir = QDir();
 }
 
@@ -260,24 +210,29 @@ void MainWindow::createDb(const QString & srcdir) {
     if(!src.exists())
         return;
 
-    cv::Mat dst = cv::Mat((int)face_recognizer->crop_height(),
-                      (int)face_recognizer->crop_width(),
-                      CV_8UC((int)face_recognizer->crop_channels()));
+//    cv::Mat dst = cv::Mat((int)face_recognizer->crop_height(),
+//                      (int)face_recognizer->crop_width(),
+//                      CV_8UC((int)face_recognizer->crop_channels()));
 
-    std::vector<float> feat(2048, 0.0);
+//    std::vector<float> feat(2048, 0.0);
     if(true){
-        namesFeats.first.clear();
-        namesFeats.second.clear();
-        auto fl = src.entryInfoList(QDir::Files | QDir::NoDotAndDotDot);
-        for(auto finfo : fl){
-            cv::Mat img_color = cv::imread(finfo.absoluteFilePath().toStdString());
-            featExtractor->extractFeat(face_detector ,point_detector, face_recognizer,img_color, dst, &feat[0]);
-            cv::imwrite(cropsdir.absoluteFilePath(finfo.fileName()).toStdString(), dst);
-            namesFeats.second.push_back(feat);
-            namesFeats.first.push_back(finfo.fileName().toStdString());
-        }
-        // Save image names and features
-        featExtractor->saveFeaturesFilePair(namesFeats, cropsdir.absoluteFilePath(namefeats).toStdString());
+        SearchActor::createDb(cropsdir.absolutePath().toStdString(), engine, src.absolutePath().toStdString());
+//        namesFeats.first.clear();
+//        namesFeats.second.clear();
+//        auto fl = src.entryInfoList(QDir::Files | QDir::NoDotAndDotDot);
+//        for(auto finfo : fl){
+//            cv::Mat img_color = cv::imread(finfo.absoluteFilePath().toStdString());
+//            auto result = engine.extractFeat(img_color,1);
+//            //featExtractor->extractFeat(face_detector ,point_detector, face_recognizer,img_color, dst, &feat[0]);
+//            if( result.size() ) {
+//                cv::imwrite(cropsdir.absoluteFilePath(finfo.fileName()).toStdString(), result[0].first);
+//                namesFeats.second.push_back(result[0].second);
+//                namesFeats.first.push_back(finfo.fileName().toStdString());
+//            }
+//        }
+//        // Save image names and features
+////        featExtractor->saveFeaturesFilePair(namesFeats, cropsdir.absoluteFilePath(namefeats).toStdString());
+//        FeaFile::saveFeaturesFilePair(namesFeats.first, namesFeats.second, cropsdir.absoluteFilePath(namefeats).toStdString());
     }
 }
 
@@ -286,47 +241,9 @@ void MainWindow::loadDb() {
     if(!db.exists())
         return;
 
-    if(namesFeats.first.empty()){
-        featExtractor->loadFeaturesFilePair(namesFeats, cropsdir.absoluteFilePath(namefeats).toStdString());
-        qDebug()<<"first loaded";
-
-        // LSH搜索方案
-        int numFeats = (int)namesFeats.first.size();
-        int dim = (int)namesFeats.second[0].size();
-
-        // Data set parameters
-        uint64_t seed = 119417657;
-
-        // Common LSH parameters
-        int num_tables = 8;
-        int num_setup_threads = 0;
-        StorageHashTable storage_hash_table = StorageHashTable::FlatHashTable;
-        DistanceFunction distance_function = DistanceFunction::NegativeInnerProduct;
-
-        // 转换数据类型
-        qDebug() << "Generating data set ...";
-        for (int ii = 0; ii < numFeats; ++ii) {
-            falconn::DenseVector<float> v = Eigen::VectorXf::Map(&namesFeats.second[ii][0], dim);
-            v.normalize(); // L2归一化
-            data.push_back(v);
-        }
-
-        // Cross polytope hashing
-        params_cp.dimension = dim;
-        params_cp.lsh_family = LSHFamily::CrossPolytope;
-        params_cp.distance_function = distance_function;
-        params_cp.storage_hash_table = storage_hash_table;
-        params_cp.k = 2; // 每个哈希表的哈希函数数目
-        params_cp.l = num_tables; // 哈希表数目
-        params_cp.last_cp_dimension = 2;
-        params_cp.num_rotations = 2;
-        params_cp.num_setup_threads = num_setup_threads;
-        params_cp.seed = seed ^ 833840234;
-        cptable = unique_ptr<falconn::LSHNearestNeighborTable<falconn::DenseVector<float>>>(std::move(construct_table<falconn::DenseVector<float>>(data, params_cp)));
-        cptable->set_num_probes(896);
-        qDebug() << "index build finished ...";
-
-    }
+//    if(namesFeats.first.empty()){
+        actor.load(cropsdir.absolutePath().toStdString());
+//    }
 }
 
 
@@ -342,17 +259,19 @@ void MainWindow::searchSimilearImgs(const QString & target) {
     ui->previewImg->setPixmap(QPixmap::fromImage(
                                   Helper::mat2qimage(image_color)));
 
+    auto r = engine.extractFeat(image_color, 1);
+    //featExtractor->extractFeat(face_detector, point_detector, face_recognizer, img_color, dst_img, query_feat);
 
-    auto candidates = do_LSH_search(image_color);
+    this->loadDb();
+    std::vector<std::pair<std::size_t, float>> result = actor.search(&(r[0].second[0]), 2048, numKNN);
 
-    ui->cropImgLabel->setPixmap(QPixmap::fromImage(
-                                  Helper::mat2qimage(dst_img)));
+    auto ns = actor.toUserData(result);
 
 
     ui->scrlArea->takeWidget();
     imgs_listeWidget->clear();
-    for(size_t  i= 0; i < candidates.size() && i < 10; ++i){
-        QString filename = QString::fromStdString(namesFeats.first.at(candidates[i]));
+    for(size_t  i= 0; i < ns.size() && i < 10; ++i){
+        QString filename = QString::fromStdString(ns[i].first);
         QString tempImgName(cropsdir.absoluteFilePath(filename));
         imgs_listeWidget->addItem(new QListWidgetItem(QIcon(tempImgName),
                                                       filename));

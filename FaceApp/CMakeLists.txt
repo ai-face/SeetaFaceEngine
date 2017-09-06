@@ -1,23 +1,21 @@
 ﻿
 
-project(CocsoFace)
+project(FaceSpyApp)
 
 find_package(Qt5 COMPONENTS Widgets Core Gui REQUIRED)
 
 set(SRCS 
     main.cpp
-    mainwindow.cpp 
-    videohandler.cpp 
-    helper.cpp 
-    src/extractFeats.cpp
-)
+    mainwindow.cpp
+        helper.cpp
+        SearchActor.cpp SearchActor.h
+        FeaFile.cpp FeaFile.h
+        FaceEngine.cpp FaceEngine.h SearchActorCreate.cpp)
 
 set(HEADERS  
-    mainwindow.h 
-    videohandler.h 
-    helper.h 
-    src/extractFeats.h
-)
+    mainwindow.h
+        helper.h
+        )
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
