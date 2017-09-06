@@ -14,8 +14,8 @@
 #include <string>
 
 
-#include "SearchActor.h"
-#include "FaceEngine.h"
+#include <searcher/SearchActor.h>
+#include <searcher/FaceEngine.h>
 
 #include<QMenu>
 

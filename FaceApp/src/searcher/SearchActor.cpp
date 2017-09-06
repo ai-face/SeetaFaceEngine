@@ -42,8 +42,6 @@ bool SearchActor::load(const std::string & path, int hint) {
     return true;
 }
 
-
-
 void SearchActor::_do_init(const std::vector<std::string> & names_, const std::vector<std::vector<float>> & feats_){
     this->names = names_;
     this->feats = feats_;

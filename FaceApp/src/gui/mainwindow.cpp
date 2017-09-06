@@ -13,11 +13,11 @@
 #include <ctime>
 #include <iostream>
 
-#include "SearchActor.h"
-#include "FeaFile.h"
+#include <searcher/SearchActor.h>
+#include <searcher/FeaFile.h>
 
 
-const QString namefeats("namesFeats.bin");
+//const QString namefeats("namesFeats.bin");
 
 MainWindow::MainWindow(QWidget *parent) :QMainWindow(parent), ui(new Ui::MainWindow)
 {
@@ -237,9 +237,9 @@ void MainWindow::createDb(const QString & srcdir) {
 }
 
 void MainWindow::loadDb() {
-    QFile db(cropsdir.absoluteFilePath(namefeats));
-    if(!db.exists())
-        return;
+//    QFile db(cropsdir.absoluteFilePath(namefeats));
+//    if(!db.exists())
+//        return;
 
 //    if(namesFeats.first.empty()){
         actor.load(cropsdir.absolutePath().toStdString());
