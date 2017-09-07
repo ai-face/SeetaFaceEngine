@@ -12,8 +12,10 @@
 #include <map>
 #include "FaceEngine.h"
 
+
 const std::string SearchActorDbName("namesFeats.bin");
 
+class FaceEngine;
 class SearchActor {
 public:
     bool load(const std::string & path, int hint=-1);

@@ -35,10 +35,10 @@ int main(int argc, char ** argv){
         for(auto f : files) {
             QFile file(f.absoluteFilePath());
             auto basename = f.baseName();
-            if(basename.endsWith(str) || i<400 )
-                 QFile::copy(f.absoluteFilePath(), testdir.absoluteFilePath(f.fileName()));
+            if( !basename.endsWith(str) && i <400 )
+                QFile::copy(f.absoluteFilePath(), datadir.absoluteFilePath(f.fileName()));
             else
-                 QFile::copy(f.absoluteFilePath(), datadir.absoluteFilePath(f.fileName()));
+                QFile::copy(f.absoluteFilePath(), testdir.absoluteFilePath(f.fileName()));
         }
     }
 

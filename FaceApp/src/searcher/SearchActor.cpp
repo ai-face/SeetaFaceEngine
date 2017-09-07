@@ -3,7 +3,9 @@
 //
 
 #include "SearchActor.h"
+#include "FaceEngine.h"
 #include "FeaFile.h"
+#include "FaceEngine.h"
 #include "falconn/eigen_wrapper.h"
 #include "falconn/lsh_nn_table.h"
 #include <cassert>

@@ -7,6 +7,8 @@
 #include "recognizer.h"
 #include "face_detection.h"
 #include "face_alignment.h"
+#include <opencv/cv.h>
+#include <opencv/highgui.h>
 #include <cassert>
 //#include <common.h> // from seetaFaceEngine
 
@@ -34,6 +36,11 @@ bool FaceEngine::load(const std::string & model_dir) {
     // Initialize face Identification model
     engine->face_recognizer.reset(new seeta::FaceIdentification((model_dir+ "/" + "seeta_fr_v1.0.bin").c_str()));
 }
+
+std::vector<std::pair<cv::Mat, FaceEngine::FeatVec> > FaceEngine::extractFeat(const std::string & color_img, size_t max  ) {
+    cv::Mat m = cv::imread(color_img);
+    return extractFeat(m, max);
+};
 
 std::vector<std::pair<cv::Mat, FaceEngine::FeatVec> > FaceEngine::extractFeat(const cv::Mat & img_color, size_t max) {
     cv::Mat img_gray;

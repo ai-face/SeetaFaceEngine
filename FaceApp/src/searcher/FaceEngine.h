@@ -20,6 +20,8 @@ public:
 
     std::vector<std::pair<cv::Mat, FeatVec> > extractFeat(const cv::Mat & color_img, size_t max = 1 );
 
+    std::vector<std::pair<cv::Mat, FeatVec> > extractFeat(const std::string & color_img, size_t max = 1 );
+
 protected:
     class Engine;
     std::shared_ptr<Engine> engine = nullptr;
